@@ -1,21 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using ASWA.Core.Interfaces;
-using ASWA.Infra.Data;
-using ASWA.Infra.Services.Storage;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.EntityFrameworkCore;
-using ASWA.Web.Interfaces;
-using ASWA.Web.Services;
+using ASWA.Web.Extensions.Startup;
 
 namespace ASWA.Web
 {
@@ -33,44 +20,39 @@ namespace ASWA.Web
         {
             services.AddControllers();
 
-            services.AddDbContext<ApplicationDbContext>(
-                options => SqlServerDbContextOptionsExtensions.UseSqlServer(
-                    options, Environment.GetEnvironmentVariable("MSSQLDB_CONNECTION")));
-            
-            services.Configure<TelemetryConfiguration>((o) =>
-            {
-                o.InstrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
-                o.TelemetryInitializers.Add(new OperationCorrelationTelemetryInitializer());
-            });
-            services.Configure<BlobStorageOptions>((o) =>
-            {
-                o.ConnectionString = Environment.GetEnvironmentVariable("BLOB_STORAGE_CONNECTION");
-                o.Containers = new Dictionary<string, string> { { "your_container_key", "your_container_name" } };
-            });
-            services.AddSingleton<IBlobStorageService, BlobStorageService>();
+            services.AddCustomizedDatabase(Configuration);
 
-            // Our services
-            services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
-            services.AddScoped<ICustomerViewModelService, CustomerViewModelService>();
+            services.AddCustomizedAuth(Configuration);
+
+            services.AddCustomizedAppInsights(Configuration);
+
+            services.AddCustomizedStorage(Configuration);
+
+            services.AddCustomizedDependencyInjection(Configuration);
+
+            services.AddCustomizedSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseCustomizedErrorHandling(env);
+
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseCustomizedAuth();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            app.UseCustomizedSwagger();
         }
     }
 }

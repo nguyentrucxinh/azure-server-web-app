@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ASWA.Core.Interfaces
 {
-    public interface IAsyncRepository<T> where T : BaseEntityAudit, IAggregateRoot
+    public interface IRepository<T> where T : BaseEntityAudit, IAggregateRoot
     {
         Task<T> GetByIdAsync(int id);
         Task<IReadOnlyList<T>> ListAllAsync();

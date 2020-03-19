@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ASWA.Infra.Data
 {
-    public class EfRepository<T> : IAsyncRepository<T> where T : BaseEntityAudit, IAggregateRoot
+    public class EfRepository<T> : IRepository<T> where T : BaseEntityAudit, IAggregateRoot
     {
         protected readonly ApplicationDbContext _dbContext;
 
