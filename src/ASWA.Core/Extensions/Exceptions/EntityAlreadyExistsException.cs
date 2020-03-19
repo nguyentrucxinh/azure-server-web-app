@@ -1,6 +1,6 @@
 using System;
 
-namespace ASWA.Core.Exceptions
+namespace ASWA.Core.Extensions.Exceptions
 {
     public class EntityAlreadyExistsException : Exception
     {

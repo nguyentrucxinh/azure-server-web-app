@@ -6,7 +6,7 @@ namespace ASWA.Infra.Services.Mail
 {
     public class MailService : IMailService
     {
-        public MailService(IConfiguration configuration)
+        public MailService()
         {
         }
 

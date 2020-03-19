@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace ASWA.Core.Specifications
+namespace ASWA.Core.Extensions.Specifications
 {
     public abstract class BaseSpecification<T> : ISpecification<T>
     {
