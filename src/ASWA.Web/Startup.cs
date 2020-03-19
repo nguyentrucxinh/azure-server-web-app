@@ -28,6 +28,8 @@ namespace ASWA.Web
 
             services.AddCustomizedStorage(Configuration);
 
+            services.AddCustomizedHttp(Configuration);
+
             services.AddCustomizedDependencyInjection(Configuration);
 
             services.AddCustomizedSwagger();
